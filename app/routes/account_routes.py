@@ -5,7 +5,7 @@ from app.dependencies import account_service
 router = APIRouter()
 
 class CreateAccountRequest(BaseModel):
-    userId: int
+    userId: str
     accountType: str
 
 class AmountRequest(BaseModel):
@@ -21,7 +21,7 @@ def create_account(request: CreateAccountRequest):
 
 # GET /api/accounts/{id}
 @router.get("/api/accounts/{account_id}")
-def get_account(account_id: int):
+def get_account(account_id: str):
     try:
         account = account_service.get_account(account_id)
         return account
@@ -31,7 +31,7 @@ def get_account(account_id: int):
 # deposit
 # POST /api/accounts/{id}/deposit
 @router.post("/api/accounts/{account_id}/deposit")
-def deposit(account_id: int, request: AmountRequest):
+def deposit(account_id: str, request: AmountRequest):
     try:
         account_deposit = account_service.deposit(account_id, request.amount)
         return account_deposit
@@ -41,7 +41,7 @@ def deposit(account_id: int, request: AmountRequest):
 # withdraw
 # POST /api/accounts/{id}/withdraw
 @router.post("/api/accounts/{account_id}/withdraw")
-def withdraw(account_id: int, request: AmountRequest):
+def withdraw(account_id: str, request: AmountRequest):
     try:
         account_withdrawal = account_service.withdraw(account_id, request.amount)
         return account_withdrawal
@@ -51,7 +51,7 @@ def withdraw(account_id: int, request: AmountRequest):
 # transaction
 # GET /api/accounts/{id}/transactions
 @router.get("/api/accounts/{account_id}/transactions")
-def get_transaction(account_id: int):
+def get_transaction(account_id: str):
     try:
         current_tnx = account_service.get_transactions(account_id)
         return current_tnx
