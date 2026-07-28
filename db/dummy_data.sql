@@ -32,18 +32,18 @@ INSERT INTO accounts (user_id, balance, account_type) VALUES
 INSERT INTO transactions (account_id, txn_type, amount) VALUES
 -- John's Checking
 (1, 'DEPOSIT', 3000.00),
-(1, 'WITHDRAWAL', 500.00),
+(1, 'WITHDRAW', 500.00),
 
 -- John's Savings
 (2, 'DEPOSIT', 10000.00),
 
 -- Alice's Checking
 (3, 'DEPOSIT', 2000.00),
-(3, 'WITHDRAWAL', 499.50),
+(3, 'WITHDRAW', 499.50),
 
 -- Michael's Savings
 (4, 'DEPOSIT', 8000.00),
-(4, 'WITHDRAWAL', 199.75),
+(4, 'WITHDRAW', 199.75),
 
 -- Michael's Checking
 (5, 'DEPOSIT', 500.00),
@@ -53,4 +53,4 @@ INSERT INTO transactions (account_id, txn_type, amount) VALUES
 
 -- David's Checking
 (7, 'DEPOSIT', 100.75),
-(7, 'WITHDRAWAL', 50.00);
+(7, 'WITHDRAW', 50.00);
