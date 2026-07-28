@@ -2,8 +2,8 @@ from app.repositories.user_repository import UserRepository
 from app.repositories.account_repository import AccountRepository
 from app.repositories.transaction_repository import TransactionRepository
 from app.services.account_service import AccountService
+from app.services.user_service import UserService
 
-from app.models.user import User
 
 """
 dependencies.py = shared application state.
@@ -18,8 +18,5 @@ user_repository = UserRepository()
 account_repository = AccountRepository()
 transaction_repository = TransactionRepository()
 account_service = AccountService(account_repository, transaction_repository)
+user_service = UserService(user_repository)
 
-# Seed one test user since account creation currently requires an existing userId
-
-user = User(None, "Test User", "test@example.com", None )
-user_repository.create_user(user)

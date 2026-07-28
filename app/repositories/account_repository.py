@@ -42,3 +42,9 @@ class AccountRepository:
             account_type=doc["account_type"],
             created_at=doc["created_at"]
         )
+
+    def update_balance(self, account_id, new_balance):
+        self.collection.update_one(
+            {"_id": ObjectId(account_id)},
+            {"$set": {"balance": new_balance}}
+        )

@@ -42,6 +42,9 @@ class AccountService:
         # increase the account's balance by amount
         account.balance += amount
 
+        # update to in database
+        self.account_repository.update_balance(account_id, account.balance)
+
         # record this by creating a new transaction object
         new_txn = Transaction(txn_id=None, account_id = account_id, txn_type="DEPOSIT", amount=amount, created_at=None)
 
@@ -68,6 +71,9 @@ class AccountService:
 
         # decrease the account's balance by amount
         account.balance -= amount
+
+        # update to in database
+        self.account_repository.update_balance(account_id, account.balance)
 
         # record this by creating a new transaction object
         new_txn = Transaction(txn_id=None, account_id = account_id, txn_type="WITHDRAW", amount=amount, created_at=None)
