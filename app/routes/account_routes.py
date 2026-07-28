@@ -61,7 +61,7 @@ def get_transaction(account_id: str):
 # Delete account
 # DELETE /api/accounts/{id}
 @router.delete("/api/accounts/{account_id}")
-def delete_account(account_id: int):
+def delete_account(account_id: str):
     try:
         account = account_service.delete_account(account_id)
         return account
