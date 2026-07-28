@@ -12,3 +12,7 @@ class AccountRepository:
 
     def get_account(self, account_id):
         return self.accounts.get(account_id)
+
+    def delete_account(self, account_id):
+        account = self.accounts.pop(account_id, None)
+        return account

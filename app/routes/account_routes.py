@@ -57,3 +57,13 @@ def get_transaction(account_id: int):
         return current_tnx
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
+
+# Delete account
+# DELETE /api/accounts/{id}
+@router.delete("/api/accounts/{account_id}")
+def delete_account(account_id: int):
+    try:
+        account = account_service.delete_account(account_id)
+        return account
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
