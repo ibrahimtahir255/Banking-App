@@ -1,13 +1,29 @@
+from app.mongo_db import db
+from bson.objectid import ObjectId
+from app.models.user import User
+
 class UserRepository:
     def __init__(self) -> None:
-        self.users = {}
-        self.next_id = 1
+        self.collection = db["users"]
 
     def create_user(self, user):
-        user.user_id = self.next_id
-        self.users[user.user_id] = user
-        self.next_id += 1
+        document = {
+            "name": user.name,
+            "email": user.email,
+            "created_at": user.created_at
+        }
+
+        result = self.collection.insert_one(document)
+        user.user_id = str(result.inserted_id)
         return user
 
     def get_user(self, user_id):
-        return self.users.get(user_id)
+        doc = self.collection.find_one({"_id": ObjectId(user_id)})
+        if doc is None:
+            return None
+        return User(
+            user_id=str(doc["_id"]),
+            name=doc["name"],
+            email=doc["email"],
+            created_at=doc["created_at"]
+        )
