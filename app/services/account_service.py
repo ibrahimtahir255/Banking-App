@@ -24,7 +24,11 @@ class AccountService:
         self.transaction_repository = transaction_repository
 
     def get_account(self, account_id):
-        return self.account_repository.get_account(account_id)
+        account = self.account_repository.get_account(account_id)
+        if account is None:
+            raise ValueError("Account not found")
+
+        return account
 
     def deposit(self, account_id, amount):
         if amount <= 0:
@@ -32,6 +36,8 @@ class AccountService:
 
         # fetch the accoutn object
         account = self.account_repository.get_account(account_id)
+        if account is None:
+            raise ValueError("Account not found")
 
         # increase the account's balance by amount
         account.balance += amount
@@ -49,6 +55,8 @@ class AccountService:
 
         # fetch the account object
         account = self.account_repository.get_account(account_id)
+        if account is None:
+            raise ValueError("Account not found")
         current_balance = account.balance
 
         if amount <= 0:
