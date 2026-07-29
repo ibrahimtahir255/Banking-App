@@ -1,4 +1,3 @@
-from typing_extensions import deprecated
 from passlib.context import CryptContext
 
 """
