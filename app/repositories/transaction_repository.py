@@ -35,3 +35,11 @@ class TransactionRepository:
             )
         return results
 
+    def _to_transaction(self, doc):
+        return Transaction(
+            txn_id=str(doc["_id"]),
+            account_id=doc["account_id"],
+            txn_type=doc["txn_type"],
+            amount=doc["amount"],
+            created_at=doc.get("created_at"),
+        )

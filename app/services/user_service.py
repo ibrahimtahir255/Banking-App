@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from app.models.user import User
 
 
@@ -7,7 +8,7 @@ class UserService:
 
     def create_user(self, name, email):
         # build a User (user_id=None, created_at=None)
-        user = User(user_id=None, name=name, email=email,created_at=None)
+        user = User(user_id=None, name=name, email=email,created_at=datetime.now(timezone.utc))
         # save it via self.user_repository.create_user(...)
         user = self.user_repository.create_user(user)
         # return it

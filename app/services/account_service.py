@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from app.models import account, user
 from app.models.transaction import Transaction
 from app.models.account import Account
@@ -46,6 +47,8 @@ class AccountService:
         self.account_repository.update_balance(account_id, account.balance)
 
         # record this by creating a new transaction object
+        self.account_repository.update_balance(account_id, account.balance)
+
         new_txn = Transaction(txn_id=None, account_id = account_id, txn_type="DEPOSIT", amount=amount, created_at=None)
 
         # save that transaction
@@ -88,7 +91,7 @@ class AccountService:
         return self.transaction_repository.get_transactions_by_account(account_id)
     
     def create_account(self, user_id, account_type):
-        account = Account(account_id=None, user_id=user_id, balance=0,account_type=account_type, created_at=None)
+        account = Account(account_id=None, user_id=user_id, balance=0,account_type=account_type, created_at=datetime.now(timezone.utc))
         account = self.account_repository.create_account(account)
         return account
 
