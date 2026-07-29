@@ -75,6 +75,9 @@ class AccountService:
         # decrease the account's balance by amount
         account.balance -= amount
 
+        #Remove amount from document
+        self.account_repository.update_balance(account_id,account.balance)
+
         # record this by creating a new transaction object
         new_txn = Transaction(txn_id=None, account_id = account_id, txn_type="WITHDRAW", amount=amount, created_at=None)
 
