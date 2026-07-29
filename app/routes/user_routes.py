@@ -9,6 +9,10 @@ class CreateUserRequest(BaseModel):
     email: str 
     password : str
 
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
 # POST /api/users - create_user, calling user_service, return result
 @router.post("/api/users")
 def create_user(request: CreateUserRequest):
@@ -23,3 +27,11 @@ def get_user(user_id: str):
         return user
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
+
+# POST /api/login - login user
+@router.post("/api/login")
+def login(request: LoginRequest):
+    try:
+        return user_service.login(request.email, request.password)
+    except ValueError as e:
+        raise HTTPException(status_code=401, detail=str(e))
