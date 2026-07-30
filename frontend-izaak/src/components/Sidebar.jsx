@@ -1,9 +1,11 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useState } from 'react';
 
 export default function Sidebar({ accounts = [], activeAccountId = null, onNewStash }) {
   const { session, logOut } = useAuth();
   const navigate = useNavigate();
+  const [choosing, setChoosing] = useState(false)
 
   const initials = (session?.name || session?.email || '?')
     .split(' ')
@@ -77,22 +79,50 @@ export default function Sidebar({ accounts = [], activeAccountId = null, onNewSt
       )}
 
       <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: 14 }}>
+        {choosing ? (
+          <div>
+            <button
+              className="btn"
+              style= {{flex:1}}
+              onClick={() => {
+                onNewStash('checking');
+                setChoosing(false);
+              }}
+            >
+              Checking
+            </button>
+
+            <button
+              className='btn'
+              style={{flex:1}}
+              onClick={() => {
+                onNewStash('savings');
+                setChoosing(false);
+              }}
+            >
+              Savings
+            </button>
+          </div>
+        ): (
         <button
-          onClick={onNewStash}
-          className="btn-dashed"
-          style={{
-            borderRadius: 'var(--r-md)',
-            padding: 12,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 4,
-            textAlign: 'left',
-            cursor: 'pointer',
-          }}
+        onClick={() => setChoosing(true)}
+        className="btn-dashed"
+        style={{
+          borderRadius: 'var(--r-md)',
+          padding: 12,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 4,
+          textAlign: 'left',
+          cursor: 'pointer',
+        }}
         >
           <span style={{ fontSize: 16, color: 'var(--ink)' }}>+ New account</span>
           <span style={{ fontSize: 14, color: 'var(--muted)' }}>Checking or savings, your call</span>
         </button>
+
+        )}
+
         <div
           onClick={logOut}
           title="Log out"

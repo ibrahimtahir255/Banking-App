@@ -1,5 +1,4 @@
 import { createUser, login as apiLogin, getUser } from './usersApi';
-import { createAccount } from './accountsApi';
 import { setToken, clearToken } from './client';
 
 const ACCOUNTS_KEY = 'pigbank_known_accounts'; // { [email]: [accountId, ...] }
@@ -29,16 +28,14 @@ export async function realSignUp({ name, email, password }) {
     const user = await createUser(name, email, password);
     const { access_token } = await apiLogin(email, password);
     setToken(access_token);
-  
-    const checking = await createAccount(user.user_id, 'checking');
-    const savings = await createAccount(user.user_id, 'savings');
-  
-    const accountIds = [checking.account_id, savings.account_id];
+
+
+    const accountIds = [];
     const known = readKnownAccounts();
     known[email] = accountIds;
     writeKnownAccounts(known);
     localStorage.setItem(SESSION_EMAIL_KEY, email);
-  
+
     return { userId: user.user_id, name: user.name, email: user.email, accountIds };
 }
 
@@ -64,8 +61,14 @@ export function getStoredSessionEmail() {
     return localStorage.getItem(SESSION_EMAIL_KEY);
 }
   
-  export function addAccountToKnown(email, accountId) {
+export function addAccountToKnown(email, accountId) {
     const known = readKnownAccounts();
     known[email] = [...(known[email] || []), accountId];
+    writeKnownAccounts(known);
+}
+
+export function removeAccountFromKnown(email, accountId) {
+    const known = readKnownAccounts();
+    known[email] = (known[email] || []).filter((id) => id != accountId);
     writeKnownAccounts(known);
 }

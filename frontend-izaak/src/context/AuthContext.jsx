@@ -5,6 +5,7 @@ import {
   realLogOut,
   getStoredSessionEmail,
   addAccountToKnown,
+  removeAccountFromKnown,
 } from '../api/realAuth';
 
 const AuthContext = createContext(null);
@@ -44,9 +45,15 @@ export function AuthProvider({ children }) {
     setSession({ ...session, accountIds: [...session.accountIds, accountId] });
   }
 
+  function unregisterAccount(accountId) {
+    if (!session) return;
+    removeAccountFromKnown(session.email, accountId);
+    setSession({ ...session, accountIds: session.accountIds.filter((id) => id !== accountId)});
+  }
+
   return (
     <AuthContext.Provider
-      value={{ session, loading, logIn, signUp, logOut, registerNewAccount }}
+      value={{ session, loading, logIn, signUp, logOut, registerNewAccount, unregisterAccount }}
     >
       {children}
     </AuthContext.Provider>
@@ -58,3 +65,4 @@ export function useAuth() {
   if (!ctx) throw new Error('useAuth must be used within AuthProvider');
   return ctx;
 }
+

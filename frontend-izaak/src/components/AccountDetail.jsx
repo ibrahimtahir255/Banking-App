@@ -1,16 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { getAccount, getTransactions } from '../api/accountsApi';
+import { getAccount, getTransactions,deleteAccount } from '../api/accountsApi';
 import Sidebar from './Sidebar';
 import MoneyMoveModal from './MoneyMoveModal';
+import ConfirmDialog from './ConfirmDialog';
 import { formatMoney, formatDateTime, txnLabel } from '../utils/format';
 
 const PAGE_SIZE = 7;
 
 export default function AccountDetail() {
   const { accountId } = useParams();
-  const { session } = useAuth();
+  const navigate = useNavigate();
+  const { session, unregisterAccount } = useAuth();
 
   const [account, setAccount] = useState(null);
   const [allAccounts, setAllAccounts] = useState([]);
@@ -20,6 +22,7 @@ export default function AccountDetail() {
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(null);
   const [error, setError] = useState(null);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
 
   const load = useCallback(async ({ silent = false } = {}) => {
     if (!silent) setLoading(true);
@@ -39,6 +42,12 @@ export default function AccountDetail() {
       if (!silent) setLoading(false);
     }
   }, [accountId, session.accountIds]);
+
+  async function handleDelete() {
+    await deleteAccount(accountId);
+    unregisterAccount(accountId);
+    navigate('/');
+  }
 
   useEffect(() => {
     load();
@@ -104,6 +113,7 @@ export default function AccountDetail() {
           <div style={{ display: 'flex', gap: 10 }}>
             <button className="btn btn-primary" onClick={() => setModal({ direction: 'deposit', account })}>Deposit</button>
             <button className="btn" onClick={() => setModal({ direction: 'withdraw', account })}>Withdraw</button>
+            <button className='btn' style={{ color: 'var(--neg)' }} onClick={() => setConfirmingDelete(true)}>Delete account</button>
           </div>
         </div>
 
@@ -207,6 +217,19 @@ export default function AccountDetail() {
           account={modal.account}
           onClose={() => setModal(null)}
           onSuccess={() => load({ silent: true })}
+        />
+      )}
+
+      {confirmingDelete && (
+        <ConfirmDialog
+          title="Delete this account?"
+          message="This can't be undone. All transaction history for this account will be lost."
+          confirmLabel="Delete account"
+          onCancel={() => setConfirmingDelete(false)}
+          onConfirm={async () => {
+            setConfirmingDelete(false);
+            await handleDelete();
+          }}
         />
       )}
     </div>
