@@ -35,7 +35,9 @@ Methods:
 
 RISK_THRESHOLD = 100
 
-
+# The email feature is part of the risk-scoring workflow.
+# It does not run when the service is created. It runs only when risk scoring logic
+# detects that an account has crossed the RISK_THRESHOLD after a suspicious event.
 class RiskScoringService:
     #Get access to account and transaction repos
     def __init__(self, account_repository, transaction_repository, user_repository=None, email_service=None) -> None:
@@ -45,9 +47,11 @@ class RiskScoringService:
         self.email_service = email_service or send_high_risk_email
 
     def _send_high_risk_notification(self, account: Account, new_score: int):
+        # Only send an email if we have both the user lookup and the email callback available.
         if self.user_repository is None or self.email_service is None:
             return
 
+        # Look up the account owner so we know which email address should receive the alert.
         user = self.user_repository.get_user(account.user_id)
         if user is None:
             return
@@ -56,6 +60,7 @@ class RiskScoringService:
         if not recipient_email:
             return
 
+        # Trigger the email notification once the account crosses the danger threshold.
         try:
             self.email_service(recipient_email, account.account_id, new_score, RISK_THRESHOLD)
         except Exception as exc:
@@ -73,6 +78,7 @@ class RiskScoringService:
             account.risk_score += 10
             self.account_repository.update_risk_score(account.account_id, account.risk_score)
 
+            # Send an alert only when the score crosses from below the threshold to at/above it.
             if previous_score < RISK_THRESHOLD and account.risk_score >= RISK_THRESHOLD:
                 self._send_high_risk_notification(account, account.risk_score)
 
@@ -89,6 +95,9 @@ class RiskScoringService:
             previous_score = account_item.risk_score
             account_item.risk_score += 10
             self.account_repository.update_risk_score(account_item.account_id, account_item.risk_score)
+
+            # If a login-related risk increase pushes the score over the threshold,
+            # notify the account owner by email.
             if previous_score < RISK_THRESHOLD and account_item.risk_score >= RISK_THRESHOLD:
                 self._send_high_risk_notification(account_item, account_item.risk_score)
             updated_accounts.append(account_item)
@@ -103,6 +112,7 @@ class RiskScoringService:
         score = account_item.risk_score
         self.account_repository.update_risk_score(account_id, score)
 
+        # A full evaluation may also trigger an alert if the stored score is already high enough.
         if score >= RISK_THRESHOLD:
             self._send_high_risk_notification(account_item, score)
 
