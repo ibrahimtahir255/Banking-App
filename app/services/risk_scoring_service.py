@@ -34,7 +34,7 @@ class RiskScoringService:
         print(balance_before_deposit)
 
         if (deposit_amount >= 10000) or (deposit_amount > 0.9 * balance_before_deposit):
-            print("MORE THAN OR EQUAL 10,000 DEPOSITED THAT'S SUS")
+            print("MORE THAN OR EQUAL 10,000 DEPOSITED. INCREASING RISK SCORE BY 10")
             #Incrase risk score by 10
 
             #Update risk score by adding 10 to the account's risk score

@@ -2,6 +2,7 @@ from app.mongo_db import db
 from bson.objectid import ObjectId
 from app.models.user import User
 
+
 class UserRepository:
     def __init__(self) -> None:
         self.collection = db["users"]
@@ -10,6 +11,7 @@ class UserRepository:
         document = {
             "name": user.name,
             "email": user.email,
+            "password": user.password,
             "created_at": user.created_at
         }
 
@@ -25,5 +27,6 @@ class UserRepository:
             user_id=str(doc["_id"]),
             name=doc["name"],
             email=doc["email"],
+            password=doc["password"],
             created_at=doc["created_at"]
         )

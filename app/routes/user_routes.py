@@ -7,11 +7,12 @@ router = APIRouter()
 class CreateUserRequest(BaseModel):
     name: str
     email: str 
+    password : str
 
 # POST /api/users - create_user, calling user_service, return result
 @router.post("/api/users")
 def create_user(request: CreateUserRequest):
-    user = user_service.create_user(request.name, request.email)
+    user = user_service.create_user(request.name, request.email, request.password)
     return user
 
 #  GET /api/users/{user_id} - get_user, path param user_id: str, try/except ValueError -> HTTPException 404
