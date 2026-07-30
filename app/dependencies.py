@@ -4,7 +4,7 @@ from app.repositories.transaction_repository import TransactionRepository
 from app.services.account_service import AccountService
 from app.services.user_service import UserService
 from app.services.risk_scoring_service import RiskScoringService
-
+from app.services.email_service import send_high_risk_email
 """
 dependencies.py = shared application state.
 
@@ -24,7 +24,12 @@ account_repository = AccountRepository()
 transaction_repository = TransactionRepository()
 
 
-risk_scoring_service = RiskScoringService(account_repository, transaction_repository)
+risk_scoring_service = RiskScoringService(
+    account_repository,
+    transaction_repository,
+    user_repository=user_repository,
+    email_service=send_high_risk_email,
+)
 
 account_service = AccountService(account_repository, transaction_repository,risk_scoring_service)
 user_service = UserService(user_repository,risk_scoring_service)
