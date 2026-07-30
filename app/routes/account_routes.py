@@ -6,7 +6,7 @@ from app.auth import get_current_user
 router = APIRouter()
 
 class CreateAccountRequest(BaseModel):
-    user_id: str
+    userId: str
     accountType: str
 
 class AmountRequest(BaseModel):
@@ -18,10 +18,10 @@ class AmountRequest(BaseModel):
 @router.post("/api/accounts")
 def create_account(request: CreateAccountRequest, current_user:str = Depends(get_current_user)):
     # authorization check!
-    if request.user_id != current_user:
+    if request.userId != current_user:
         raise HTTPException(status_code=403, detail="Not authorized to access this account")
 
-    account = account_service.create_account(request.user_id, request.accountType)
+    account = account_service.create_account(request.userId, request.accountType)
     return account
 
 # GET /api/accounts/{id}

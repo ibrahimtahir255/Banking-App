@@ -1,21 +1,23 @@
 from app.mongo_db import db
 from bson.objectid import ObjectId
 from app.models.transaction import Transaction
+from datetime import datetime
 
 class TransactionRepository:
     def __init__(self) -> None:
         self.collection = db["transactions"]
-    
+
     def create_transaction(self, transaction):
         document = {
             "account_id": transaction.account_id,
             "txn_type": transaction.txn_type,
             "amount": transaction.amount,
-            "created_at": transaction.created_at
+            "created_at": datetime.utcnow()
         }
 
         result = self.collection.insert_one(document)
         transaction.txn_id = str(result.inserted_id)
+        transaction.created_at = document["created_at"]
         return transaction
     
     def get_transactions_by_account(self, account_id):
