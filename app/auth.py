@@ -18,3 +18,7 @@ def hash_password(plain_password):
 # returns True if match, Flase otherwise
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
+    # if (plain_password == hashed_password):
+    #     return True
+    # else:
+    #     return False

@@ -1,27 +1,38 @@
 from datetime import datetime, timezone
 from app.models.user import User
-from app.auth import hash_password
+from app.auth import hash_password, verify_password
 
 
 class UserService:
     def __init__(self, user_repository) -> None:
         self.user_repository = user_repository
 
-    def create_user(self, name, email,password):
-        #has password
+    def create_user(self, name, email, password):
         hashed = hash_password(password)
-        # build a User (user_id=None, created_at=None)
-        print(hashed)
-        
-        user = User(user_id=None, name=name, email=email,created_at=datetime.now(timezone.utc),password=hashed)
-        # save it via self.user_repository.create_user(...)
+        user = User(
+            user_id=None,
+            name=name,
+            email=email,
+            created_at=datetime.now(timezone.utc),
+            password=hashed,
+        )
         user = self.user_repository.create_user(user)
-        # return it
         return user
-    
+
     def get_user(self, user_id):
         user = self.user_repository.get_user(user_id)
         if user is None:
             raise ValueError("User not found")
 
         return user
+
+    def authenticate_user(self, email, password):
+        user = self.user_repository.get_user_by_email(email)
+        if user is None:
+            return None
+        print(password)
+        print(user.password)
+        if verify_password(password, user.password):
+            return user
+
+        return None

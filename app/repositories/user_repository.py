@@ -12,7 +12,7 @@ class UserRepository:
             "name": user.name,
             "email": user.email,
             "password": user.password,
-            "created_at": user.created_at
+            "created_at": user.created_at,
         }
 
         result = self.collection.insert_one(document)
@@ -28,5 +28,17 @@ class UserRepository:
             name=doc["name"],
             email=doc["email"],
             password=doc["password"],
-            created_at=doc["created_at"]
+            created_at=doc["created_at"],
+        )
+
+    def get_user_by_email(self, email):
+        doc = self.collection.find_one({"email": email})
+        if doc is None:
+            return None
+        return User(
+            user_id=str(doc["_id"]),
+            name=doc["name"],
+            email=doc["email"],
+            password=doc["password"],
+            created_at=doc["created_at"],
         )
