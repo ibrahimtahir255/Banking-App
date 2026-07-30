@@ -1,6 +1,7 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from app.dependencies import account_service
+from app.auth import get_current_user
 
 router = APIRouter()
 
@@ -15,13 +16,13 @@ class AmountRequest(BaseModel):
 # The 5 route functions below, using account_service
 # POST /api/accounts
 @router.post("/api/accounts")
-def create_account(request: CreateAccountRequest):
+def create_account(request: CreateAccountRequest, current_user:str = Depends(get_current_user)):
     account = account_service.create_account(request.userId, request.accountType)
     return account
 
 # GET /api/accounts/{id}
 @router.get("/api/accounts/{account_id}")
-def get_account(account_id: str):
+def get_account(account_id: str, current_user:str = Depends(get_current_user)):
     try:
         account = account_service.get_account(account_id)
         return account
@@ -31,7 +32,7 @@ def get_account(account_id: str):
 # deposit
 # POST /api/accounts/{id}/deposit
 @router.post("/api/accounts/{account_id}/deposit")
-def deposit(account_id: str, request: AmountRequest):
+def deposit(account_id: str, request: AmountRequest, current_user:str = Depends(get_current_user)):
     try:
         account_deposit = account_service.deposit(account_id, request.amount)
         return account_deposit
@@ -41,7 +42,7 @@ def deposit(account_id: str, request: AmountRequest):
 # withdraw
 # POST /api/accounts/{id}/withdraw
 @router.post("/api/accounts/{account_id}/withdraw")
-def withdraw(account_id: str, request: AmountRequest):
+def withdraw(account_id: str, request: AmountRequest, current_user:str = Depends(get_current_user)):
     try:
         account_withdrawal = account_service.withdraw(account_id, request.amount)
         return account_withdrawal
@@ -51,7 +52,7 @@ def withdraw(account_id: str, request: AmountRequest):
 # transaction
 # GET /api/accounts/{id}/transactions
 @router.get("/api/accounts/{account_id}/transactions")
-def get_transaction(account_id: str):
+def get_transaction(account_id: str, current_user:str = Depends(get_current_user)):
     try:
         current_tnx = account_service.get_transactions(account_id)
         return current_tnx
@@ -61,7 +62,7 @@ def get_transaction(account_id: str):
 # Delete account
 # DELETE /api/accounts/{id}
 @router.delete("/api/accounts/{account_id}")
-def delete_account(account_id: str):
+def delete_account(account_id: str, current_user:str = Depends(get_current_user)):
     try:
         account = account_service.delete_account(account_id)
         return account
