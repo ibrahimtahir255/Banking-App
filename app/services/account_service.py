@@ -91,6 +91,19 @@ class AccountService:
         return self.transaction_repository.get_transactions_by_account(account_id)
     
     def create_account(self, user_id, account_type):
-        account = Account(account_id=None, user_id=user_id, balance=0,account_type=account_type, created_at=None,risk_score=0)
+        if not user_id:
+            raise ValueError("user_id is required")
+
+        account = Account(
+            account_id=None,
+            user_id=user_id,
+            balance=0,
+            account_type=account_type,
+            created_at=None,
+            risk_score=0,
+        )
         account = self.account_repository.create_account(account)
         return account
+
+    def get_accounts_by_user(self, user_id):
+        return self.account_repository.get_accounts_by_user(user_id)

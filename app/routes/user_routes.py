@@ -9,6 +9,7 @@ class CreateUserRequest(BaseModel):
     name: str
     email: str
     password: str
+    user_id :str
 
 
 class LoginRequest(BaseModel):
@@ -19,7 +20,7 @@ class LoginRequest(BaseModel):
 # POST /api/users - create_user, calling user_service, return result
 @router.post("/api/users")
 def create_user(request: CreateUserRequest):
-    user = user_service.create_user(request.name, request.email, request.password)
+    user = user_service.create_user(request.name, request.email, request.password,request.user_id)
     return user
 
 

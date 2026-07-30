@@ -41,5 +41,18 @@ class RiskScoringService:
             account.risk_score += 10
             self.account_repository.update_risk_score(account.account_id, account.risk_score)
             
-        
-        
+    def evaluate_login_attempt(self, user_id):
+        if not user_id:
+            return []
+
+        accounts = self.account_repository.get_accounts_by_user(user_id)
+
+        updated_accounts = []
+
+        for account_item in accounts:
+            print(account_item)
+            account_item.risk_score += 10
+            self.account_repository.update_risk_score(account_item.account_id, account_item.risk_score)
+            updated_accounts.append(account_item)
+
+        return updated_accounts

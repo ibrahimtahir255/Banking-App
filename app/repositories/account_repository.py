@@ -59,3 +59,17 @@ class AccountRepository:
             {"_id":ObjectId(account_id)},
             {"$set":{"risk_score":new_score}}
         )
+
+    def get_accounts_by_user(self, user_id):
+        docs = self.collection.find({"user_id": user_id})
+        return [
+            Account(
+                account_id=str(doc["_id"]),
+                user_id=doc["user_id"],
+                balance=doc["balance"],
+                account_type=doc["account_type"],
+                created_at=doc["created_at"],
+                risk_score=doc["risk_score"],
+            )
+            for doc in docs
+        ]

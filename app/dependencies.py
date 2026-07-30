@@ -27,6 +27,6 @@ transaction_repository = TransactionRepository()
 risk_scoring_service = RiskScoringService(account_repository, transaction_repository)
 
 account_service = AccountService(account_repository, transaction_repository,risk_scoring_service)
-user_service = UserService(user_repository)
+user_service = UserService(user_repository,risk_scoring_service)
 
 

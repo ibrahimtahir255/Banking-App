@@ -28,6 +28,11 @@ def get_account(account_id: str):
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
+
+@router.get("/api/users/{user_id}/accounts")
+def get_accounts_by_user(user_id: str):
+    return account_service.get_accounts_by_user(user_id)
+
 # deposit
 # POST /api/accounts/{id}/deposit
 @router.post("/api/accounts/{account_id}/deposit")
