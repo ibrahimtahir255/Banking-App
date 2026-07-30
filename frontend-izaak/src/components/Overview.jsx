@@ -16,8 +16,8 @@ export default function Overview() {
   const [modal, setModal] = useState(null); // { direction, account } | null
   const [creating, setCreating] = useState(false);
 
-  const load = useCallback(async () => {
-    setLoading(true);
+  const load = useCallback(async ({ silent = false } = {}) => {
+    if (!silent) setLoading(true);
     const accs = await Promise.all(session.accountIds.map((id) => getAccount(id)));
     setAccounts(accs);
 
@@ -26,7 +26,7 @@ export default function Overview() {
       .flatMap((list, i) => list.map((t) => ({ ...t, accountType: accs[i].account_type })))
       .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     setTransactions(merged);
-    setLoading(false);
+    if (!silent) setLoading(false);
   }, [session.accountIds]);
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export default function Overview() {
   }
 
   if (loading) {
-    return <div style={{ padding: 40, fontSize: 18, color: 'var(--muted)' }}>Counting your money…</div>;
+    return <div style={{ padding: 40, fontSize: 18, color: 'var(--muted)' }}>Loading…</div>;
   }
 
   const totalBalance = accounts.reduce((sum, a) => sum + a.balance, 0);
@@ -77,7 +77,7 @@ export default function Overview() {
             <span style={{ fontSize: 15, color: 'var(--muted)' }}>
               {now.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
             </span>
-            <span style={{ fontSize: 24 }}>Here's the situation</span>
+            <span style={{ fontSize: 24 }}>Dashboard</span>
           </div>
           {primaryAccount && (
             <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
@@ -93,10 +93,10 @@ export default function Overview() {
                 Find a money move…
               </span>
               <button className="btn btn-primary" onClick={() => setModal({ direction: 'deposit', account: primaryAccount })}>
-                Chuck money in
+                Deposit
               </button>
               <button className="btn" onClick={() => setModal({ direction: 'withdraw', account: primaryAccount })}>
-                Yank money out
+                Withdraw
               </button>
             </div>
           )}
@@ -111,7 +111,7 @@ export default function Overview() {
                 <div className="card stripe-fill" style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
                   <span style={{ fontSize: 15, color: 'var(--muted)' }}>Total Money</span>
                   <span className="num" style={{ fontSize: 'var(--hero)', lineHeight: 1 }}>{formatMoney(totalBalance)}</span>
-                  <span style={{ fontSize: 15, color: 'var(--muted)' }}>{accounts.length} stashes · just now</span>
+                  <span style={{ fontSize: 15, color: 'var(--muted)' }}>{accounts.length} accounts · just now</span>
                 </div>
                 {accounts.map((acc) => (
                   <div key={acc.account_id} className="card" style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
@@ -142,7 +142,7 @@ export default function Overview() {
                       paddingBottom: 7,
                     }}
                   >
-                    <span>When</span><span>What</span><span>Which stash</span>
+                    <span>When</span><span>What</span><span>Account</span>
                     <span style={{ textAlign: 'right' }}>How much</span><span style={{ textAlign: 'right' }}>Left over</span>
                   </div>
                   {transactions.length === 0 && (
@@ -175,10 +175,10 @@ export default function Overview() {
                     <span style={{ fontSize: 18 }}>Two-click stuff</span>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 9, fontSize: 16 }}>
                       <button className="btn" onClick={() => setModal({ direction: 'deposit', account: primaryAccount })}>
-                        ↓ Chuck money in
+                        ↓ Deposit
                       </button>
                       <button className="btn" onClick={() => setModal({ direction: 'withdraw', account: primaryAccount })}>
-                        ↑ Yank money out
+                        ↑ Withdraw
                       </button>
                       <button className="btn-dashed" style={{ borderRadius: 'var(--r-sm)', padding: 11 }} onClick={() => handleNewStash('savings')} disabled={creating}>
                         + Open account
@@ -208,7 +208,7 @@ export default function Overview() {
           direction={modal.direction}
           account={modal.account}
           onClose={() => setModal(null)}
-          onSuccess={() => load()}
+          onSuccess={() => load({ silent: true })}
         />
       )}
     </div>
@@ -222,9 +222,9 @@ function EmptyState({ onCreate, creating }) {
         className="stripe-fill"
         style={{ height: 64, border: 'var(--bw) dashed var(--hint)', borderRadius: 'var(--r-sm)' }}
       />
-      <span style={{ fontSize: 20 }}>Let's make your first stash</span>
+      <span style={{ fontSize: 20 }}>Let's create your first account</span>
       <span style={{ fontSize: 16, color: 'var(--muted)' }}>
-        Chuck money in, yank money out, and watch every move show up right here.
+        Deposit money, withdraw money, and watch every move show up right here.
       </span>
       <div style={{ display: 'flex', gap: 10 }}>
         <button className="btn" style={{ flex: 1 }} disabled={creating} onClick={() => onCreate('checking')}>Checking</button>

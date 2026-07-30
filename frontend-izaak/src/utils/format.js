@@ -20,7 +20,6 @@ export function formatDateTime(value) {
   })}`;
 }
 
-// Playful copy from the wireframe: deposits are "Cha-ching!", withdrawals "Bye-bye"
 export function txnLabel(txnType) {
-  return txnType === 'DEPOSIT' ? 'Cha-ching!' : 'Bye-bye';
+  return txnType === 'DEPOSIT' ? 'Deposit' : 'Withdrawal';
 }

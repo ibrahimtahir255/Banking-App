@@ -75,11 +75,11 @@ export default function MoneyMoveModal({ direction, account, onClose, onSuccess 
       >
         {step === 'amount' && (
           <>
-            <Header title={isDeposit ? 'Chuck money in' : 'Yank money out'} onClose={onClose} />
+            <Header title={isDeposit ? 'Deposit' : 'Withdraw'} onClose={onClose} />
             <form onSubmit={goToConfirm} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
                 <span style={{ fontSize: 15, color: 'var(--muted)' }}>
-                  {isDeposit ? 'Into which stash?' : 'Out of which stash?'}
+                  {isDeposit ? 'Into which account?' : 'Out of which account?'}
                 </span>
                 <div
                   style={{
@@ -150,10 +150,10 @@ export default function MoneyMoveModal({ direction, account, onClose, onSuccess 
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
                 <button type="button" onClick={onClose} className="btn">
-                  Nah, never mind
+                  Cancel
                 </button>
                 <button type="submit" className="btn btn-primary">
-                  Looks good, next
+                  Next
                 </button>
               </div>
             </form>
@@ -162,7 +162,7 @@ export default function MoneyMoveModal({ direction, account, onClose, onSuccess 
 
         {step === 'confirm' && (
           <>
-            <span style={{ fontSize: 20 }}>Hold up — you sure?</span>
+            <span style={{ fontSize: 20 }}>{isDeposit ? 'Confirm your deposit' : 'Confirm your withdrawal'}</span>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10, fontSize: 17 }}>
               <Row label="How much" value={<span className="num" style={{ fontSize: 24 }}>{formatMoney(parsedAmount)}</span>} />
               <Row label={isDeposit ? 'Into' : 'Out of'} value={`${account.account_type === 'checking' ? 'Checking' : 'Savings'} •••• ${account.account_id.slice(-4)}`} />
@@ -175,7 +175,7 @@ export default function MoneyMoveModal({ direction, account, onClose, onSuccess 
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
               <button className="btn" onClick={() => setStep('amount')}>Go back</button>
               <button className="btn btn-primary" disabled={submitting} onClick={handleConfirm}>
-                {submitting ? 'Doing it…' : 'Yep, do it!'}
+                {submitting ? 'Processing…' : 'Confirm'}
               </button>
             </div>
           </>
@@ -198,11 +198,11 @@ export default function MoneyMoveModal({ direction, account, onClose, onSuccess 
               ✓
             </div>
             <span className="num" style={{ fontSize: 28 }}>
-              Boom! {formatMoney(parsedAmount)} {isDeposit ? 'in.' : 'out.'}
+              {isDeposit ? 'Deposit' : 'Withdrawal'} successful: {formatMoney(parsedAmount)}
             </span>
             <span style={{ fontSize: 16, color: 'var(--muted)', maxWidth: 320 }}>
-              {account.account_type === 'checking' ? 'Checking' : 'Savings'} •••• {account.account_id.slice(-4)} is{' '}
-              {isDeposit ? 'fatter' : 'lighter'} now: {formatMoney(updatedAccount.balance)}.
+              {account.account_type === 'checking' ? 'Checking' : 'Savings'} •••• {account.account_id.slice(-4)}{' '}
+              new balance: {formatMoney(updatedAccount.balance)}.
             </span>
             <div style={{ display: 'flex', gap: 10 }}>
               <button className="btn btn-primary" onClick={onClose}>Take me home</button>

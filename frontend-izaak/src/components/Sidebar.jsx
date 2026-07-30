@@ -35,13 +35,13 @@ export default function Sidebar({ accounts = [], activeAccountId = null, onNewSt
           }}
         />
         <span style={{ fontSize: 19 }}>
-          <span style={{ color: 'var(--brand)', fontWeight: 700 }}>PIG</span> Bank
+          <span style={{ color: 'var(--brand)', fontWeight: 700 }}>Pig</span> E-Bank
         </span>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 3, fontSize: 17 }}>
         <Link to="/" style={navItemStyle(activeAccountId === null)}>Home base</Link>
-        <span style={{ ...navItemStyle(activeAccountId !== null), cursor: 'default' }}>My stashes</span>
+        <span style={{ ...navItemStyle(activeAccountId !== null), cursor: 'default' }}>My accounts</span>
         <span style={{ ...navItemStyle(false), color: 'var(--muted)' }}>Money moves</span>
         <span style={{ ...navItemStyle(false), color: 'var(--muted)' }}>Shove money around</span>
         <span style={{ ...navItemStyle(false), color: 'var(--muted)' }}>Knobs &amp; buttons</span>
@@ -90,7 +90,7 @@ export default function Sidebar({ accounts = [], activeAccountId = null, onNewSt
             cursor: 'pointer',
           }}
         >
-          <span style={{ fontSize: 16, color: 'var(--ink)' }}>+ New stash</span>
+          <span style={{ fontSize: 16, color: 'var(--ink)' }}>+ New account</span>
           <span style={{ fontSize: 14, color: 'var(--muted)' }}>Checking or savings, your call</span>
         </button>
         <div

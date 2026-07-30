@@ -19,27 +19,48 @@ export default function AccountDetail() {
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(null);
+  const [error, setError] = useState(null);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    const [acc, txns, siblings] = await Promise.all([
-      getAccount(accountId),
-      getTransactions(accountId),
-      Promise.all(session.accountIds.map((id) => getAccount(id))),
-    ]);
-    setAccount(acc);
-    setAllAccounts(siblings);
-    setTransactions(txns.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
-    setPage(0);
-    setLoading(false);
+  const load = useCallback(async ({ silent = false } = {}) => {
+    if (!silent) setLoading(true);
+    try {
+      const [acc, txns, siblings] = await Promise.all([
+        getAccount(accountId),
+        getTransactions(accountId),
+        Promise.all(session.accountIds.map((id) => getAccount(id))),
+      ]);
+      setAccount(acc);
+      setAllAccounts(siblings);
+      setTransactions(txns.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
+      setPage(0);
+    } catch (err) {
+      setError(err);
+    } finally {
+      if (!silent) setLoading(false);
+    }
   }, [accountId, session.accountIds]);
 
   useEffect(() => {
     load();
   }, [load]);
 
+  if (error) {
+    return (
+      <div style={{ padding: 40, display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <span style={{ fontSize: 22 }}>
+          {error.status === 403 ? 'Access denied' : 'Something went wrong'}
+        </span>
+        <span style={{ fontSize: 16, color: 'var(--muted)' }}>
+          {error.status === 403
+            ? "This account doesn't belong to you, so you can't view it."
+            : error.message}
+        </span>
+      </div>
+    );
+  }
+
   if (loading || !account) {
-    return <div style={{ padding: 40, fontSize: 18, color: 'var(--muted)' }}>Pulling up the ledger…</div>;
+    return <div style={{ padding: 40, fontSize: 18, color: 'var(--muted)' }}>Loading…</div>;
   }
 
   const now = new Date();
@@ -74,15 +95,15 @@ export default function AccountDetail() {
         >
           <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
             <span style={{ fontSize: 14, color: 'var(--muted)' }}>
-              My stashes / {account.account_type === 'checking' ? 'Checking' : 'Savings'}
+              My accounts / {account.account_type === 'checking' ? 'Checking' : 'Savings'}
             </span>
             <span style={{ fontSize: 24 }}>
               {account.account_type === 'checking' ? 'Checking' : 'Savings'} •••• {account.account_id.slice(-4)}
             </span>
           </div>
           <div style={{ display: 'flex', gap: 10 }}>
-            <button className="btn btn-primary" onClick={() => setModal({ direction: 'deposit', account })}>Chuck money in</button>
-            <button className="btn" onClick={() => setModal({ direction: 'withdraw', account })}>Yank money out</button>
+            <button className="btn btn-primary" onClick={() => setModal({ direction: 'deposit', account })}>Deposit</button>
+            <button className="btn" onClick={() => setModal({ direction: 'withdraw', account })}>Withdraw</button>
           </div>
         </div>
 
@@ -185,7 +206,7 @@ export default function AccountDetail() {
           direction={modal.direction}
           account={modal.account}
           onClose={() => setModal(null)}
-          onSuccess={() => load()}
+          onSuccess={() => load({ silent: true })}
         />
       )}
     </div>

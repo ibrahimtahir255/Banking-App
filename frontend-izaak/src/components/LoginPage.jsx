@@ -59,15 +59,15 @@ export default function LoginPage() {
             }}
           />
           <span style={{ fontSize: 38 }}>
-            <span style={{ color: 'var(--brand)', fontWeight: 700 }}>PIG</span> Bank
+            <span style={{ color: 'var(--brand)', fontWeight: 700 }}>Pig</span> E-Bank
           </span>
         </div>
 
         <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: 14, maxWidth: 440 }}>
           <span style={{ fontSize: 40, lineHeight: 1.15 }}>Your money. Every move. Zero mystery.</span>
           <span style={{ fontSize: 18, color: 'var(--muted)', lineHeight: 1.5 }}>
-            Stashes for spending and stashes for saving. Shove money around in two clicks and see
-            exactly what's left every single time.
+            Manage your checking and savings accounts in one place. Move money in two clicks and
+            see exactly what's left every time.
           </span>
         </div>
 
@@ -110,9 +110,9 @@ export default function LoginPage() {
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-          <span style={{ fontSize: 26 }}>{mode === 'login' ? "Hey, you're back!" : 'Make a stash of your own'}</span>
+          <span style={{ fontSize: 26 }}>{mode === 'login' ? 'Log in' : 'Create an account'}</span>
           <span style={{ fontSize: 16, color: 'var(--muted)' }}>
-            {mode === 'login' ? "Pop in your email and we'll go find your money." : "Two minutes, no paperwork."}
+            {mode === 'login' ? 'Enter your email and password to continue.' : 'It only takes a minute.'}
           </span>
         </div>
 
@@ -146,8 +146,8 @@ export default function LoginPage() {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-              <span style={{ fontSize: 15, color: 'var(--muted)' }}>Secret word</span>
-              {mode === 'login' && <span style={{ fontSize: 14, color: 'var(--accent)', cursor: 'pointer' }}>Forgot it?</span>}
+              <span style={{ fontSize: 15, color: 'var(--muted)' }}>Password</span>
+              {mode === 'login' && <span style={{ fontSize: 14, color: 'var(--accent)', cursor: 'pointer' }}>Forgot password?</span>}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <input
@@ -168,7 +168,7 @@ export default function LoginPage() {
           </div>
 
           <button type="submit" disabled={submitting} className="btn btn-primary" style={{ textAlign: 'center' }}>
-            {submitting ? 'One sec…' : mode === 'login' ? 'Let me in!' : "Let's go"}
+            {submitting ? 'One moment…' : mode === 'login' ? 'Log in' : 'Sign up'}
           </button>
 
           {error && (
@@ -189,14 +189,14 @@ export default function LoginPage() {
         <div style={{ fontSize: 16, color: 'var(--muted)', textAlign: 'center' }}>
           {mode === 'login' ? (
             <>
-              No stash yet?{' '}
+              Don't have an account?{' '}
               <span style={{ color: 'var(--accent)', cursor: 'pointer' }} onClick={() => { setMode('signup'); setError(''); }}>
-                Make one, it's quick
+                Sign up
               </span>
             </>
           ) : (
             <>
-              Already have a stash?{' '}
+              Already have an account?{' '}
               <span style={{ color: 'var(--accent)', cursor: 'pointer' }} onClick={() => { setMode('login'); setError(''); }}>
                 Log in instead
               </span>
