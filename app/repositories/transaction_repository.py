@@ -1,6 +1,7 @@
 from app.mongo_db import db
 from bson.objectid import ObjectId
 from app.models.transaction import Transaction
+from datetime import datetime, timezone
 
 class TransactionRepository:
     def __init__(self) -> None:
@@ -11,7 +12,7 @@ class TransactionRepository:
             "account_id": transaction.account_id,
             "txn_type": transaction.txn_type,
             "amount": transaction.amount,
-            "created_at": transaction.created_at
+            "created_at": datetime.now(timezone.utc)
         }
 
         result = self.collection.insert_one(document)
