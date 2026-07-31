@@ -1,10 +1,19 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
+
+const NAV_LINKS = [
+  { to: '/', label: 'Home base', exact: true },
+  { to: '/accounts', label: 'My accounts' },
+  { to: '/money-moves', label: 'Money moves' },
+  { to: '/transfer', label: 'Shove money around' },
+  { to: '/profile', label: 'Profile settings' },
+];
 
 export default function Sidebar({ accounts = [], activeAccountId = null, onNewStash }) {
   const { session, logOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [choosing, setChoosing] = useState(false)
 
   const initials = (session?.name || session?.email || '?')
@@ -42,11 +51,12 @@ export default function Sidebar({ accounts = [], activeAccountId = null, onNewSt
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 3, fontSize: 17 }}>
-        <Link to="/" style={navItemStyle(activeAccountId === null)}>Home base</Link>
-        <span style={{ ...navItemStyle(activeAccountId !== null), cursor: 'default' }}>My accounts</span>
-        <span style={{ ...navItemStyle(false), color: 'var(--muted)' }}>Money moves</span>
-        <span style={{ ...navItemStyle(false), color: 'var(--muted)' }}>Shove money around</span>
-        <span style={{ ...navItemStyle(false), color: 'var(--muted)' }}>Knobs &amp; buttons</span>
+        {NAV_LINKS.map(({ to, label, exact }) => {
+          const active = exact ? location.pathname === to : location.pathname.startsWith(to);
+          return (
+            <Link key={to} to={to} style={navItemStyle(active)}>{label}</Link>
+          );
+        })}
       </div>
 
       {accounts.length > 0 && (
@@ -123,39 +133,42 @@ export default function Sidebar({ accounts = [], activeAccountId = null, onNewSt
 
         )}
 
-        <div
-          onClick={logOut}
-          title="Log out"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 9,
-            borderTop: '1px dashed var(--rule)',
-            paddingTop: 14,
-            cursor: 'pointer',
-          }}
-        >
+        <div style={{ borderTop: '1px dashed var(--rule)', paddingTop: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
           <div
-            style={{
-              width: 32,
-              height: 32,
-              flex: 'none',
-              border: 'var(--bw) var(--bs) var(--ink)',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 13,
-            }}
+            onClick={() => navigate('/profile')}
+            title="Profile settings"
+            style={{ display: 'flex', alignItems: 'center', gap: 9, cursor: 'pointer' }}
           >
-            {initials}
+            <div
+              style={{
+                width: 32,
+                height: 32,
+                flex: 'none',
+                border: 'var(--bw) var(--bs) var(--ink)',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 13,
+              }}
+            >
+              {initials}
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+              <span style={{ fontSize: 15 }}>{session?.name || 'Account'}</span>
+              <span style={{ fontSize: 13, color: 'var(--muted)', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {session?.email}
+              </span>
+            </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-            <span style={{ fontSize: 15 }}>{session?.name || 'Account'}</span>
-            <span style={{ fontSize: 13, color: 'var(--muted)', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {session?.email}
-            </span>
-          </div>
+
+          <span
+            onClick={logOut}
+            title="Log out"
+            style={{ fontSize: 14, color: 'var(--muted)', cursor: 'pointer', paddingLeft: 41 }}
+          >
+            Log out
+          </span>
         </div>
       </div>
     </div>

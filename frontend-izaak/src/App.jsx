@@ -3,6 +3,10 @@ import { useAuth } from './context/AuthContext';
 import LoginPage from './components/LoginPage';
 import Overview from './components/Overview';
 import AccountDetail from './components/AccountDetail';
+import AccountsList from './components/AccountsList';
+import MoneyMoves from './components/MoneyMoves';
+import Transfer from './components/Transfer';
+import Profile from './components/Profile';
 
 function ProtectedRoute({ children }) {
   const { session, loading } = useAuth();
@@ -24,10 +28,42 @@ export default function App() {
         }
       />
       <Route
+        path="/accounts"
+        element={
+          <ProtectedRoute>
+            <AccountsList />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/accounts/:accountId"
         element={
           <ProtectedRoute>
             <AccountDetail />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/money-moves"
+        element={
+          <ProtectedRoute>
+            <MoneyMoves />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/transfer"
+        element={
+          <ProtectedRoute>
+            <Transfer />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <Profile />
           </ProtectedRoute>
         }
       />

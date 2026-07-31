@@ -5,6 +5,7 @@ import { getAccount, getTransactions,deleteAccount } from '../api/accountsApi';
 import Sidebar from './Sidebar';
 import MoneyMoveModal from './MoneyMoveModal';
 import ConfirmDialog from './ConfirmDialog';
+import RiskPanel from './RiskPanel';
 import { formatMoney, formatDateTime, txnLabel } from '../utils/format';
 
 const PAGE_SIZE = 7;
@@ -133,6 +134,8 @@ export default function AccountDetail() {
               <span className="num" style={{ fontSize: 'var(--sub)', color: 'var(--neg)' }}>−{formatMoney(wentOut)}</span>
             </div>
           </div>
+
+          <RiskPanel score={account.risk_score} />
 
           <div className="card" style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: 11 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

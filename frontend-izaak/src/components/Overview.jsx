@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import { getAccount, getTransactions, createAccount } from '../api/accountsApi';
 import Sidebar from './Sidebar';
 import MoneyMoveModal from './MoneyMoveModal';
+import RiskBadge from './RiskBadge';
+import EmptyAccountsState from './EmptyAccountsState';
 import { formatMoney, formatDate, txnLabel } from '../utils/format';
 
 export default function Overview() {
@@ -104,7 +106,7 @@ export default function Overview() {
 
         <div style={{ flex: 1, padding: 'var(--pad)', display: 'flex', flexDirection: 'column', gap: 'var(--gap)' }}>
           {accounts.length === 0 ? (
-            <EmptyState onCreate={handleNewStash} creating={creating} />
+            <EmptyAccountsState onCreate={handleNewStash} creating={creating} />
           ) : (
             <>
               <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr', gap: 16 }}>
@@ -115,9 +117,12 @@ export default function Overview() {
                 </div>
                 {accounts.map((acc) => (
                   <div key={acc.account_id} className="card" style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-                    <span style={{ fontSize: 15, color: 'var(--muted)' }}>
-                      {acc.account_type === 'checking' ? 'Checking' : 'Savings'} •••• {acc.account_id.slice(-4)}
-                    </span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+                      <span style={{ fontSize: 15, color: 'var(--muted)' }}>
+                        {acc.account_type === 'checking' ? 'Checking' : 'Savings'} •••• {acc.account_id.slice(-4)}
+                      </span>
+                      <RiskBadge score={acc.risk_score} />
+                    </div>
                     <span className="num" style={{ fontSize: 'var(--sub)', lineHeight: 1.1 }}>{formatMoney(acc.balance)}</span>
                     <span
                       onClick={() => navigate(`/accounts/${acc.account_id}`)}
@@ -212,17 +217,3 @@ export default function Overview() {
   );
 }
 
-function EmptyState({ onCreate, creating }) {
-  return (
-    <div className="card" style={{ padding: 22, display: 'flex', flexDirection: 'column', gap: 13, maxWidth: 480 }}>
-      <span style={{ fontSize: 20 }}>Let's create your first account</span>
-      <span style={{ fontSize: 16, color: 'var(--muted)' }}>
-        Deposit money, withdraw money, and watch every move show up right here.
-      </span>
-      <div style={{ display: 'flex', gap: 10 }}>
-        <button className="btn" style={{ flex: 1 }} disabled={creating} onClick={() => onCreate('checking')}>Checking</button>
-        <button className="btn" style={{ flex: 1 }} disabled={creating} onClick={() => onCreate('savings')}>Savings</button>
-      </div>
-    </div>
-  );
-}
