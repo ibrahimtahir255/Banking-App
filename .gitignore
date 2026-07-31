@@ -5,3 +5,6 @@ __pycache__/
 .DS_Store
 .env
 .venv
+lambda-env.json
+deployment.zip
+package/

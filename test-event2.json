@@ -1,0 +1,28 @@
+{
+    "resource": "/api/users",
+    "path": "/api/users",
+    "httpMethod": "POST",
+    "headers": {
+      "Content-Type": "application/json",
+      "Host": "example.execute-api.us-east-1.amazonaws.com"
+    },
+    "multiValueHeaders": null,
+    "queryStringParameters": null,
+    "multiValueQueryStringParameters": null,
+    "pathParameters": null,
+    "stageVariables": null,
+    "requestContext": {
+      "accountId": "123456789012",
+      "resourceId": "123456",
+      "stage": "test",
+      "requestId": "test-invoke-request-2",
+      "identity": { "sourceIp": "127.0.0.1" },
+      "resourcePath": "/api/users",
+      "httpMethod": "POST",
+      "apiId": "1234567890",
+      "path": "/test/api/users",
+      "protocol": "HTTP/1.1"
+    },
+    "body": "{\"name\": \"Lambda Test\", \"email\": \"lambdatest@example.com\", \"password\": \"testpass123\"}",
+    "isBase64Encoded": false
+  }
