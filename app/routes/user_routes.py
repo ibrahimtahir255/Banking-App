@@ -5,6 +5,7 @@ from app.auth import get_current_user
 
 router = APIRouter()
 
+
 class CreateUserRequest(BaseModel):
     name: str
     email: str 
@@ -35,6 +36,8 @@ def create_user(request: CreateUserRequest):
     except ValueError as e:
         # 400 for bad request
         raise HTTPException(status_code=400, detail=str(e))
+
+
 
 #  GET /api/users/{user_id} - get_user, path param user_id: str, try/except ValueError -> HTTPException 404
 @router.get("/api/users/{user_id}")

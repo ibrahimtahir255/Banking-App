@@ -3,6 +3,7 @@ from app.mongo_db import db
 from bson.objectid import ObjectId
 from app.models.user import User
 
+
 class UserRepository:
     def __init__(self) -> None:
         self.collection = db["users"]

@@ -19,3 +19,4 @@ app.include_router(user_router)
 def check_app():
     return {"message" : "Bank API is running"}
 
+
