@@ -38,7 +38,9 @@ def get_account(account_id: str, current_user:str = Depends(get_current_user)):
 
 
 @router.get("/api/users/{user_id}/accounts")
-def get_accounts_by_user(user_id: str):
+def get_accounts_by_user(user_id: str, current_user: str = Depends(get_current_user)):
+    if user_id != current_user:
+        raise HTTPException(status_code=403, detail="Not authorized to access this account")
     return account_service.get_accounts_by_user(user_id)
 
 # deposit

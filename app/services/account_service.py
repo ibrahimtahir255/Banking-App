@@ -106,3 +106,10 @@ class AccountService:
 
     def get_accounts_by_user(self, user_id):
         return self.account_repository.get_accounts_by_user(user_id)
+
+    def delete_account(self, account_id):
+        account = self.account_repository.delete_account(account_id)
+        if account is None:
+            raise ValueError("Account not found")
+            
+        return account

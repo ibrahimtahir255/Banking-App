@@ -1,5 +1,7 @@
 from datetime import datetime, timezone
 
+import pytest
+
 from app.auth import hash_password
 from app.models.user import User
 from app.services.user_service import UserService
@@ -27,10 +29,9 @@ def test_authenticate_user_returns_user_for_valid_credentials():
     repository = FakeUserRepository(user)
     service = UserService(repository)
 
-    authenticated_user = service.authenticate_user("jane@example.com", "secret123")
+    token = service.authenticate_user("jane@example.com", "secret123")
 
-    assert authenticated_user is not None
-    assert authenticated_user.email == "jane@example.com"
+    assert token is not None
     assert repository.lookup_email == "jane@example.com"
 
 
@@ -46,6 +47,5 @@ def test_authenticate_user_returns_none_for_invalid_password():
     repository = FakeUserRepository(user)
     service = UserService(repository)
 
-    authenticated_user = service.authenticate_user("john@example.com", "wrong-password")
-
-    assert authenticated_user is None
+    with pytest.raises(ValueError):
+        service.authenticate_user("john@example.com", "wrong-password")
