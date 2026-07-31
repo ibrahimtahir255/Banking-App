@@ -125,3 +125,10 @@ class AccountService:
             raise ValueError("Risk scoring service is not configured")
 
         return self.risk_scoring_service.verify_account(account_id, verification_code)
+
+    def delete_account(self, account_id):
+        account = self.account_repository.delete_account(account_id)
+        if account is None:
+            raise ValueError("Account not found")
+            
+        return account
