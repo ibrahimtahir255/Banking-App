@@ -1,7 +1,6 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from app.dependencies import user_service
-from app.auth import get_current_user
 
 router = APIRouter()
 
@@ -38,7 +37,7 @@ def create_user(request: CreateUserRequest):
 
 #  GET /api/users/{user_id} - get_user, path param user_id: str, try/except ValueError -> HTTPException 404
 @router.get("/api/users/{user_id}")
-def get_user(user_id: str, current_user:str = Depends(get_current_user)):
+def get_user(user_id: str):
     try:
         user = user_service.get_user(user_id)
         # dont return the password
