@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from app.models.user import User
 from app.auth.hashing import hash_password, verify_password
 from app.auth.jwt import create_access_token
-
+from app.services.risk_scoring_service import RiskScoringService
 
 class UserService:
     def __init__(self, user_repository) -> None:

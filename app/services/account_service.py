@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from app.models import account, user
 from app.models.transaction import Transaction
 from app.models.account import Account
-
+from app.services.risk_scoring_service import RiskScoringService
 """
 AccountService — business logic layer for accounts.
 Coordinates AccountRepository and TransactionRepository to implement
@@ -24,6 +24,9 @@ class AccountService:
         self.account_repository = account_repository
         self.transaction_repository = transaction_repository
 
+        #Account object depends on the risk scoring service as well 
+        self.risk_scoring_service = RiskScoringService
+
     def get_account(self, account_id):
         account = self.account_repository.get_account(account_id)
         if account is None:
@@ -39,6 +42,9 @@ class AccountService:
         account = self.account_repository.get_account(account_id)
         if account is None:
             raise ValueError("Account not found")
+
+        a = self.risk_scoring_service.evaluate_deposit(amount,account)
+        print(a)
 
         # increase the account's balance by amount
         account.balance += amount
