@@ -12,7 +12,8 @@ class TransactionRepository:
             "account_id": transaction.account_id,
             "txn_type": transaction.txn_type,
             "amount": transaction.amount,
-            "created_at": datetime.utcnow()
+            "created_at": datetime.utcnow(),
+            "related_account_id": getattr(transaction, "related_account_id", None),
         }
 
         result = self.collection.insert_one(document)
@@ -32,7 +33,9 @@ class TransactionRepository:
                 account_id= doc["account_id"],
                 txn_type= doc["txn_type"],
                 amount= doc["amount"],
-                created_at= doc["created_at"]
+                created_at= doc["created_at"],
+                # Older documents predate this field, so fall back to None.
+                related_account_id= doc.get("related_account_id"),
                 )
             )
         return results

@@ -11,6 +11,10 @@ class CreateAccountRequest(BaseModel):
 
 class AmountRequest(BaseModel):
     amount: float
+
+class TransferRequest(BaseModel):
+    to_account_id: str
+    amount: float
     
     
 # The 5 route functions below, using account_service
@@ -70,6 +74,26 @@ def withdraw(account_id: str, request: AmountRequest, current_user:str = Depends
             raise HTTPException(status_code=403, detail="Not authorized to access this account")
         account_withdrawal = account_service.withdraw(account_id, request.amount)
         return account_withdrawal
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+# transfer between two of your own accounts
+# POST /api/accounts/{account_id}/transfer
+@router.post("/api/accounts/{account_id}/transfer")
+def transfer(account_id: str, request: TransferRequest, current_user:str = Depends(get_current_user)):
+    try:
+        # authorization check! the source account must be yours
+        from_account = account_service.get_account(account_id)
+        if from_account.user_id != current_user:
+            raise HTTPException(status_code=403, detail="Not authorized to access this account")
+
+        # authorization check! you can only transfer into an account you also own
+        to_account = account_service.get_account(request.to_account_id)
+        if to_account.user_id != current_user:
+            raise HTTPException(status_code=403, detail="You can only transfer between your own accounts")
+
+        result = account_service.transfer(account_id, request.to_account_id, request.amount)
+        return result
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 

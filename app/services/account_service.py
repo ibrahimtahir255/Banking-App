@@ -88,6 +88,47 @@ class AccountService:
 
     def get_transactions(self, account_id):
         return self.transaction_repository.get_transactions_by_account(account_id)
+
+    def transfer(self, from_account_id, to_account_id, amount):
+        if amount <= 0:
+            raise ValueError("Transfer amount must be positive")
+
+        if from_account_id == to_account_id:
+            raise ValueError("Cannot transfer to the same account")
+
+        from_account = self.account_repository.get_account(from_account_id)
+        to_account = self.account_repository.get_account(to_account_id)
+
+        if amount > from_account.balance:
+            raise ValueError("Transfer amount must be less than the account balance")
+
+        # Move the balance between the two accounts.
+        from_account.balance -= amount
+        self.account_repository.update_balance(from_account_id, from_account.balance)
+
+        to_account.balance += amount
+        self.account_repository.update_balance(to_account_id, to_account.balance)
+
+        # Record both legs, linked to each other via related_account_id, so the
+        # frontend can show these as a single "Transfer" instead of a plain
+        # deposit/withdrawal pair.
+        out_txn = Transaction(
+            txn_id=None, account_id=from_account_id, txn_type="TRANSFER_OUT",
+            amount=amount, created_at=None, related_account_id=to_account_id,
+        )
+        self.transaction_repository.create_transaction(out_txn)
+
+        in_txn = Transaction(
+            txn_id=None, account_id=to_account_id, txn_type="TRANSFER_IN",
+            amount=amount, created_at=None, related_account_id=from_account_id,
+        )
+        self.transaction_repository.create_transaction(in_txn)
+
+        # Money landing in the destination account is still worth a risk look,
+        # same as it would be for a regular deposit.
+        self.risk_scoring_service.evaluate_deposit(amount, to_account)
+
+        return {"from_account": from_account, "to_account": to_account}
     
     def create_account(self, user_id, account_type):
         if not user_id:
