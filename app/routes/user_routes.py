@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, EmailStr
+from app.auth import create_access_token
 from app.dependencies import user_service
 
 router = APIRouter()
@@ -31,8 +32,12 @@ def login(request: LoginRequest):
     if user is None:
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
+    access_token = create_access_token({"user_id": user.user_id})
+
     return {
         "message": "Login successful",
+        "access_token": access_token,
+        "token_type": "bearer",
         "user": {
             "user_id": user.user_id,
             "name": user.name,

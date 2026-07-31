@@ -1,7 +1,12 @@
 from datetime import datetime, timezone
+from types import SimpleNamespace
+
+from fastapi.testclient import TestClient
 
 from app.auth import hash_password
+from app.main import app
 from app.models.user import User
+from app.routes import user_routes
 from app.services.user_service import UserService
 
 
@@ -49,3 +54,27 @@ def test_authenticate_user_returns_none_for_invalid_password():
     authenticated_user = service.authenticate_user("john@example.com", "wrong-password")
 
     assert authenticated_user is None
+
+
+def test_login_returns_access_token(monkeypatch):
+    class FakeUserService:
+        def authenticate_user(self, email, password):
+            return SimpleNamespace(
+                user_id="user-3",
+                name="Jane",
+                email=email,
+                password=password,
+                created_at=None,
+            )
+
+    monkeypatch.setattr(user_routes, "user_service", FakeUserService())
+    client = TestClient(app)
+
+    response = client.post(
+        "/api/login",
+        json={"email": "jane@example.com", "password": "secret123"},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["access_token"]
+    assert response.json()["token_type"] == "bearer"
